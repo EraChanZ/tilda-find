@@ -116,6 +116,9 @@ def algoritm(request):
 def search(request):
     global slovar
     if request.user.is_authenticated:
+        back = request.POST.get('back')
+        if back:
+            return redirect('/menu/')
         l = sorted(slovar.items(), key=lambda x: x[1], reverse=True)
         qwerty = []
         for g in l:
@@ -125,6 +128,7 @@ def search(request):
         return (render(request,'search.html', context = {'teams':qwerty}))
     else:
         return redirect('/accounts/logout/')
+
 def team(request):
     if request.user.is_authenticated:
         telegram = request.POST.get('telegram')
@@ -137,7 +141,7 @@ def team(request):
             tech = tech.replace(' ', '')
             team = Team(count=count,tech=tech,teamname=teamname,idea=idea, telegram = telegram)
             team.save()
-            return redirect('/search-page/')
+            return redirect('/menu/')
         return(render(request,'addteam.html'))
     else:
         return redirect('/accounts/logout/')

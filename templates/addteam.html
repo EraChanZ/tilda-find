@@ -6,7 +6,7 @@
     <style>
         body{
             color: #ffffff;
-            font-family: Roboto;
+            font-family: Roboto, sans-serif;
             background: linear-gradient(to right, #cc2b5e, #753a88);
         }
                 input[type=submit]{
@@ -40,8 +40,7 @@
     </style>
 </head>
 <body>
-    <form method = 'post'>
-         <center>
+  <form method = 'post'>
         {% csrf_token %}
         Максимальное кол-во участников: <br/>
         <input type = 'number' name = 'count'/><br/>
@@ -54,7 +53,6 @@
         Телеграм для связи(не больше 40 символов)<br/>
         <input type = 'text' name = 'telegram'><br/>
         <input type = 'submit'>
-    </form>
-</center>
+  </form>
 </body>
 </html>
