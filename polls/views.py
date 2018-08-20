@@ -10,7 +10,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 from polls.models import Team
-
+global slovar
 
 @csrf_exempt
 def main(request):
@@ -72,8 +72,14 @@ def menu(request):
         if nav:
             global spisok
             nav = nav.replace(' ','')
-            spisok = nav.split('#')
-            redirect('/search-page/')
+            a = nav.split('#')
+            spisok = []
+            for q in a:
+                if q in spisok:
+                    pass
+                else:
+                    spisok.append(q)
+            return redirect('/algoritm-page/')
         exit = request.POST.get('exit')
         if exit:
             logout(request)
@@ -81,23 +87,55 @@ def menu(request):
         return (render(request,'Main.html', context = {'username' : request.user.username,'telegram':request.user.email}))
     else:
         return redirect('/accounts/logout/')
-def search(request):
+def algoritm(request):
+    global slovar
+    slovar = {}
     if request.user.is_authenticated:
+        data = Team.objects.all()
+        for item in data:
+            kek = item.tech
+            spisok2 = []
+            e = kek.split('#')
+            for w in e:
+                if w in spisok2:
+                    pass
+                else:
+                    spisok2.append(w)
+            print(spisok2)
+            for a in spisok:
+                for b in spisok2:
+                    if a == b:
+                         if item in slovar:
+                             slovar[item] += 1
+                         else:
+                             slovar[item] = 1
+        return redirect('/search-page/')
+    else:
+        return redirect('/accounts/logout/')
+
+def search(request):
+    global slovar
+    if request.user.is_authenticated:
+        l = sorted(slovar.items(), key=lambda x: x[1], reverse=True)
+        qwerty = []
+        for g in l:
+            qwerty.append(g[0])
+        print(qwerty)
         teams = Team.objects.all()
-        return (render(request,'search.html', context = {'teams':teams}))
+        return (render(request,'search.html', context = {'teams':qwerty}))
     else:
         return redirect('/accounts/logout/')
 def team(request):
     if request.user.is_authenticated:
+        telegram = request.POST.get('telegram')
         count = request.POST.get('count')
         tech = request.POST.get('tech')
         teamname = request.POST.get('teamname')
         idea = request.POST.get('idea')
         print(count,tech,teamname,idea)
-        if count and int(count) <= 100 and tech and len(tech) <= 40 and teamname and len(teamname) <= 20 and len(teamname) >= 4 and idea and len(idea) <= 40:
-            print('kek')
+        if count and int(count) <= 100 and telegram and tech and len(tech) <= 40 and teamname and len(teamname) <= 20 and len(teamname) >= 4 and idea and len(idea) <= 40:
             tech = tech.replace(' ', '')
-            team = Team(count=count,tech=tech,teamname=teamname,idea=idea)
+            team = Team(count=count,tech=tech,teamname=teamname,idea=idea, telegram = telegram)
             team.save()
             return redirect('/search-page/')
         return(render(request,'addteam.html'))

@@ -6,7 +6,9 @@
 </head>
 <body>
     {% for item in teams %}
-        {{ item }}
+        Название команды:{{ item.teamname }} Максимальное кол-во участников:{{ item.count }} <br/>
+        Основная идея: {{ item.idea }} Техниками которыми надо обладать : {{ item.tech }}<br/>
+        Телеграм для связи: {{ item.telegram }}
     {% endfor %}
 </body>
 </html>

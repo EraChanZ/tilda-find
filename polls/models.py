@@ -11,5 +11,6 @@ class Team(models.Model):
     tech = models.CharField(max_length=200,default='Technology')
     teamname = models.CharField(max_length=200, default='teamname')
     idea = models.CharField(max_length=500, default='idea')
+    telegram = models.CharField(max_length=500, default='telega')
     def __str__ (self):
-        return self.teamname + '/' + self.tech + '/' + self.teamname + '/' + self.idea
+        return self.teamname + '/' + self.tech + '/' + self.teamname + '/' + self.idea + '/' + self.telegram
