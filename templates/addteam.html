@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form method = 'post'>
+        {% csrf_token %}
+        Максимальное кол-во участников: <br/>
+        <input type = 'number' name = 'count'/><br/>
+        Какими техниками или языками должен обладать участник(Техники писать через # и на английском, не больше 40 символов):<br/>
+        <input type="text" name = 'tech'/><br/>
+        Название команды (Не меньше 5 символов и не больше 20) :<br/>
+        <input type = 'text' name = 'teamname'/><br/>
+        Основная идея проэкта(не больше 40 символов)<br/>
+        <input type = 'text' name = 'idea'><br/>
+        <input type = 'submit'>
+    </form>
+</body>
+</html>

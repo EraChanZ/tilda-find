@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class = 'info'>
+        Ваш логин:{{ username }}<br/>
+        Ваш телеграмм {{ telegram }}
+        <form method = 'post'>
+            <input type = 'submit' name = 'exit' value = 'Выйти'/>
+        </form>
+    </div>
+    <div>
+        <h3>Хочу присоединиться к команде</h3>
+        Здесь вы должны через # написать что вы умеете...<br/>
+        Например : [#JavaScript #Django #React #Python]<br/>
+        <form method = 'post'>
+            <input name = 'nav' type = 'text' value = 'Что я умею ...'><input type = 'submit'/>
+        </form>
+    </div>
+    <form method = 'post'>
+        <input value = 'Создать команду' type = 'submit' name = 'addTeam'>
+    </form>
+    <style>
+        .info {
+            margin-left: 1300px;
+        }
+    </style>
+</body>
+</html>

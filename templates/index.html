@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form method = 'post' action = '/enter-page/'>
+        {% csrf_token %}
+        <input type = 'submit' value ='Войти' name="enter"/>
+    </form>
+    <form method = 'post' action = '/register-page/'>
+        {% csrf_token %}
+        <input type = 'submit' value ='Зарегистрироваться' name="register"/>
+    </form>
+</body>
+</html>
