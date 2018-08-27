@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 # Create your views here.
-from polls.models import Team
+from polls.models import Team, UserDesc, Zayavki
 global slovar
 
 @csrf_exempt
@@ -49,24 +49,34 @@ def check(request):
     password2 = request.POST.get('pswd')
     username = request.POST.get('username')
     telegram = request.POST.get('telegram')
+    info = request.POST.get('info')
     users = User.objects.all()
-    print(password,password2,username,telegram)
     s = True
     if users:
         for usr in users:
             if usr.username == username:
                 s = False
-    if password and password2 and password == password2 and username and telegram and len(username) >= 4 and len(password) >= 6 and s:
+    if password and password2 and password == password2 and username and telegram and len(username) >= 4 and len(password) >= 6 and s and info  and len(info)>30:
         user = User.objects.create_user(username, telegram, password)
         user.save()
+        info = UserDesc(user = telegram,desc=info)
+        info.save()
         return redirect('/accounts/logout/')
     else:
         return redirect('/register-page/')
 @csrf_exempt
 def menu(request):
+    global slovar
     if request.user.is_authenticated:
+        srch = request.POST.get('srch')
+        lk = request.POST.get('lk')
         add = request.POST.get('addTeam')
         nav = request.POST.get('nav')
+        if srch:
+            slovar = {}
+            return redirect('/search-page/')
+        if lk:
+            return redirect('/personal/')
         if add:
             return redirect('/addteam/')
         if nav:
@@ -101,7 +111,7 @@ def algoritm(request):
                     pass
                 else:
                     spisok2.append(w)
-            print(spisok2)
+            spisok2.remove('')
             for a in spisok:
                 for b in spisok2:
                     if a == b:
@@ -112,23 +122,99 @@ def algoritm(request):
         return redirect('/search-page/')
     else:
         return redirect('/accounts/logout/')
-
-def search(request):
-    global slovar
+def perspage(request):
     if request.user.is_authenticated:
-        back = request.POST.get('back')
-        if back:
+        mm = request.POST.get('mainmenu')
+        if mm:
             return redirect('/menu/')
-        l = sorted(slovar.items(), key=lambda x: x[1], reverse=True)
-        qwerty = []
-        for g in l:
-            qwerty.append(g[0])
-        print(qwerty)
-        teams = Team.objects.all()
-        return (render(request,'search.html', context = {'teams':qwerty}))
+        data = []
+        dann = Team.objects.all()
+        for item in dann:
+            if item.person == request.user.username:
+                data.append(item)
+        for item in dann:
+            if request.POST.get(item.teamname):
+                item.delete()
+        i = 0
+        zapr = {}
+        allzay = Zayavki.objects.all()
+        for zay in allzay:
+            if zay.team in zapr:
+                zapr[zay.team].append(zay.zayavki.split('!@#$'))
+            else:
+                zapr[zay.team] = []
+                zapr[zay.team].append(zay.zayavki.split('!@#$'))
+        for zap in zapr:
+            zapp = zap
+            k = 0
+            for i in zapr[zap]:
+                zapr[zap][k] = str(i)
+                zapr[zap][k] = zapr[zap][k][:-2]
+                zapr[zap][k] = zapr[zap][k][2:]
+                k += 1
+        print(zapr)
+        if zapr:
+            return (render(request,'lk.html',context = {'list': data,'zayav':zapr[zapp]}))
+        else:
+            return (render(request, 'lk.html', context={'list': data, 'zayav': ['Пока заявок нет']}))
     else:
         return redirect('/accounts/logout/')
-
+def search(request):
+    global slovar, itemm
+    if request.user.is_authenticated:
+        dlt = request.POST.get('deleteall')
+        if dlt:
+            lol = Team.objects.all()
+            kekk = Zayavki.objects.all()
+            for obj in lol:
+                obj.delete()
+            for usr in User.objects.all():
+                usr.delete()
+            for k in kekk:
+                k.delete()
+        back = request.POST.get('back')
+        items = Team.objects.all()
+        for item in items:
+            if request.POST.get(item.teamname):
+                itemm = item
+                return redirect('/full/')
+        if back:
+            return redirect('/menu/')
+        if slovar:
+            l = sorted(slovar.items(), key=lambda x: x[1], reverse=True)
+            qwerty = []
+            for g in l:
+                qwerty.append(g[0])
+            numb = []
+            #for qw in qwerty:
+                #numb.append(slovar[qwerty.index(qw)])
+            return (render(request,'search.html', context = {'teams':qwerty}))
+        else:
+            teams = Team.objects.all()
+            return (render(request, 'search.html', context={'teams': teams}))
+    else:
+        return redirect('/accounts/logout/')
+def full(request):
+    global itemm
+    if request.user.is_authenticated:
+        nazad = request.POST.get('naz')
+        allobj = Team.objects.all()
+        allInfo = UserDesc.objects.all()
+        for obj in allobj:
+            if request.POST.get(request.user.username + ',' + obj.teamname):
+                zayv = ''
+                if int(obj.count) > 0:
+                    for info in allInfo:
+                        if info.user == request.user.username:
+                            zayv += info.user + ': ' + info.desc + '!@#$'
+                    zayv = zayv[:-5]
+                    zay = Zayavki(team=obj,zayavki=zayv)
+                    zay.save()
+        if nazad:
+            return redirect('/search-page/')
+        return (render(request,'full.html',context={'object':itemm , 'tag':request.user.username+','+itemm.teamname}))
+    else:
+        return redirect('/accounts/logout/')
 def team(request):
     if request.user.is_authenticated:
         telegram = request.POST.get('telegram')
@@ -136,10 +222,9 @@ def team(request):
         tech = request.POST.get('tech')
         teamname = request.POST.get('teamname')
         idea = request.POST.get('idea')
-        print(count,tech,teamname,idea)
         if count and int(count) <= 100 and telegram and tech and len(tech) <= 40 and teamname and len(teamname) <= 20 and len(teamname) >= 4 and idea and len(idea) <= 40:
             tech = tech.replace(' ', '')
-            team = Team(count=count,tech=tech,teamname=teamname,idea=idea, telegram = telegram)
+            team = Team(count=count,tech=tech,teamname=teamname,idea=idea, telegram = telegram,person=request.user.username)
             team.save()
             return redirect('/menu/')
         return(render(request,'addteam.html'))

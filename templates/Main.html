@@ -43,11 +43,15 @@
     <div class = 'info'>
         Ваш логин:{{ username }}<br/>
         Ваш телеграмм {{ telegram }}
+        <form method="post">
+            {% csrf_token %}
+            <input type = 'submit' name = 'lk' value="Личный кабинет">
+        </form>
         <form method = 'post'>
+            {% csrf_token %}
             <input type = 'submit' name = 'exit' value = 'Выйти'/>
         </form>
-        <center>
-    <div/>
+    </div>
     <div>
         <h3>Хочу присоединиться к команде</h3>
         Здесь вы должны через # написать что вы умеете...<br/>
@@ -59,9 +63,12 @@
     <form method = 'post'>
         <input value = 'Создать команду' type = 'submit' name = 'addTeam'>
     </form>
+        <form method="post">
+            <input name="srch" type="submit" value="Перейти на страницу с командами"/>
+        </form>
     <style>
         .info {
-            margin-left: 1300px;
+            margin-left: 1200px;
         }
     </style>
 </center>

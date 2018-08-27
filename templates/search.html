@@ -40,13 +40,20 @@
     <title>Title</title>
 </head>
 <body>
+<form method = 'post'>
+    {% csrf_token %}
+    <input type = 'submit' value="Удалить всё" name="deleteall">
+</form>
 <center>
 <ol>
     {% for item in teams %}
         <li>
-        Название команды:{{ item.teamname }}<br/> Максимальное кол-во участников:{{ item.count }} <br/>
-        Основная идея: {{ item.idea }}<br/> Техники, которыми надо обладать : {{ item.tech }}<br/>
-        Телеграм для связи: {{ item.telegram }}
+        Название команды:{{ item.teamname }}<br/>
+        Основная идея: {{ item.idea }}<br/>
+            <form method="post">
+                {% csrf_token %}
+                <input type="submit" value="Подробнее" name={{ item.teamname }}>
+            </form>
         </li>
     {% endfor %}
 </ol>
