@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+     <style>
+        body{
+            color: #ffffff;
+            font-family: Roboto, sans-serif;
+            background: linear-gradient(to right, #cc2b5e, #753a88);
+        }
+                input[type=submit]{
+              font-family: 'Helvetica', 'Arial', sans-serif;
+              display: inline-block;
+              font-size: 1em;
+              padding: 1em 2em;
+                    margin-top: auto;
+                margin-bottom: 20px;
+              -webkit-appearance: none;
+              appearance: none;
+              background-color: #ff0081;
+              color: #fff;
+              border-radius: 4px;
+              border: none;
+              cursor: pointer;
+              position: relative;
+        }
+        center{
+                margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+        }
+        a{
+            color: #ffffff;
+        }
+
+
+    </style>
+    Название команды:{{ object.teamname }}<br/> Осталось мест:{{ object.count }} <br/>
+    Основная идея: {{ object.idea }}<br/> Техники, которыми надо обладать : {{ object.tech }}<br/>
+    Телеграм для связи: {{ object.telegram }}<br/>
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value = 'Подать заявку' name = {{ tag }} >
+    </form>
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Назад" name="naz">
+    </form>
+</body>
+</html>
