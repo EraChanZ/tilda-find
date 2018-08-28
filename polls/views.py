@@ -176,16 +176,6 @@ def perspage(request):
 def search(request):
     global slovar, itemm
     if request.user.is_authenticated:
-        dlt = request.POST.get('deleteall')
-        if dlt:
-            lol = Team.objects.all()
-            kekk = Zayavki.objects.all()
-            for obj in lol:
-                obj.delete()
-            for usr in User.objects.all():
-                usr.delete()
-            for k in kekk:
-                k.delete()
         back = request.POST.get('back')
         items = Team.objects.all()
         for item in items:
@@ -263,5 +253,23 @@ def team(request):
             team.save()
             return redirect('/menu/')
         return(render(request,'addteam.html'))
+    else:
+        return redirect('/accounts/logout/')
+def panel(request):
+    if request.user.is_authenticated:
+        if request.user.has_perm('Superuser status'):
+            dlt = request.POST.get('deleteall')
+            if dlt:
+                lol = Team.objects.all()
+                kekk = Zayavki.objects.all()
+                for obj in lol:
+                    obj.delete()
+                for usr in User.objects.all():
+                    usr.delete()
+                for k in kekk:
+                    k.delete()
+            return (render(request,'panel.html'))
+        else:
+            return HttpResponse('Ты не админ, сори')
     else:
         return redirect('/accounts/logout/')
