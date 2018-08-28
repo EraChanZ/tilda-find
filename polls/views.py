@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
@@ -138,6 +139,7 @@ def perspage(request):
         i = 0
         zapr = {}
         allzay = Zayavki.objects.all()
+        print(len(allzay))
         for zay in allzay:
             if zay.team in zapr:
                 zapr[zay.team].append(zay.zayavki.split('!@#$'))
@@ -153,8 +155,20 @@ def perspage(request):
                 zapr[zap][k] = zapr[zap][k][2:]
                 k += 1
         print(zapr)
-        if zapr:
-            return (render(request,'lk.html',context = {'list': data,'zayav':zapr[zapp]}))
+        zez = []
+        j = 0
+        for ne in zapr[zapp]:
+            zez.append(ne.split(':'))
+            i = 0
+            for zzz in zez[j]:
+                if i == 0:
+                    zez[j][i] = 'Телеграм для связи: ' + zez[j][i]
+                if i == 1:
+                    zez[j][i] = 'Обо мне: ' + zez[j][i]
+                i += 1
+            j += 1
+        if zez:
+            return (render(request,'lk.html',context = {'list': data,'zayav':zez}))
         else:
             return (render(request, 'lk.html', context={'list': data, 'zayav': ['Пока заявок нет']}))
     else:
@@ -200,16 +214,37 @@ def full(request):
         nazad = request.POST.get('naz')
         allobj = Team.objects.all()
         allInfo = UserDesc.objects.all()
-        for obj in allobj:
-            if request.POST.get(request.user.username + ',' + obj.teamname):
-                zayv = ''
-                if int(obj.count) > 0:
-                    for info in allInfo:
-                        if info.user == request.user.username:
-                            zayv += info.user + ': ' + info.desc + '!@#$'
-                    zayv = zayv[:-5]
-                    zay = Zayavki(team=obj,zayavki=zayv)
-                    zay.save()
+        print(len(allInfo))
+        allzayv = Zayavki.objects.all()
+        boole = False
+        if allzayv:
+            for zayvv in allzayv:
+                if '!@#$' in zayvv.zayavki:
+                    per = zayvv.zayavki.split('!@#$')
+                    for zzz in per:
+                        if zzz.split(':')[0] == request.user.email:
+                            boole = True
+                else:
+                    if zayvv.zayavki.split(':')[0] == request.user.email:
+                        boole = True
+        if boole:
+            pass
+        else:
+            for obj in allobj:
+                if request.POST.get(request.user.username + ',' + obj.teamname):
+                    zayv = ''
+                    if int(obj.count) > 0:
+                        for info in allInfo:
+                            print(info.user)
+                            print(info.desc)
+                            if info.user == request.user.email:
+                                zayv += info.user + ': ' + info.desc + '!@#$'
+                        zayv = zayv[:-5]
+                        print(zayv)
+                        zay = Zayavki(team=obj,zayavki=zayv)
+                        print('kkk')
+                        print(zay.zayavki)
+                        zay.save()
         if nazad:
             return redirect('/search-page/')
         return (render(request,'full.html',context={'object':itemm , 'tag':request.user.username+','+itemm.teamname}))
@@ -217,24 +252,16 @@ def full(request):
         return redirect('/accounts/logout/')
 def team(request):
     if request.user.is_authenticated:
-        klk = {'count': 0}
-        allteam = Team.objects.all()
-        for j in allteam:
-            if j.person == request.user.username:
-                klk['count'] += 1
-        if klk['count'] > 0:
+        telegram = request.POST.get('telegram')
+        count = request.POST.get('count')
+        tech = request.POST.get('tech')
+        teamname = request.POST.get('teamname')
+        idea = request.POST.get('idea')
+        if count and int(count) <= 100 and telegram and tech and len(tech) <= 40 and teamname and len(teamname) <= 20 and len(teamname) >= 4 and idea and len(idea) <= 40:
+            tech = tech.replace(' ', '')
+            team = Team(count=count,tech=tech,teamname=teamname,idea=idea, telegram = telegram,person=request.user.username)
+            team.save()
             return redirect('/menu/')
-        else:
-            telegram = request.POST.get('telegram')
-            count = request.POST.get('count')
-            tech = request.POST.get('tech')
-            teamname = request.POST.get('teamname')
-            idea = request.POST.get('idea')
-            if count and int(count) <= 100 and telegram and tech and len(tech) <= 40 and teamname and len(teamname) <= 20 and len(teamname) >= 4 and idea and len(idea) <= 40:
-                tech = tech.replace(' ', '')
-                team = Team(count=count,tech=tech,teamname=teamname,idea=idea, telegram = telegram,person=request.user.username)
-                team.save()
-                return redirect('/menu/')
-            return(render(request,'addteam.html'))
+        return(render(request,'addteam.html'))
     else:
         return redirect('/accounts/logout/')
