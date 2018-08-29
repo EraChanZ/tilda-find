@@ -154,7 +154,6 @@ def perspage(request):
                 zapr[zap][k] = zapr[zap][k][:-2]
                 zapr[zap][k] = zapr[zap][k][2:]
                 k += 1
-        print(zapr)
         zez = []
         j = 0
         for ne in zapr[zapp]:
@@ -204,7 +203,6 @@ def full(request):
         nazad = request.POST.get('naz')
         allobj = Team.objects.all()
         allInfo = UserDesc.objects.all()
-        print(len(allInfo))
         allzayv = Zayavki.objects.all()
         boole = False
         if allzayv:
@@ -225,15 +223,10 @@ def full(request):
                     zayv = ''
                     if int(obj.count) > 0:
                         for info in allInfo:
-                            print(info.user)
-                            print(info.desc)
                             if info.user == request.user.email:
                                 zayv += info.user + ': ' + info.desc + '!@#$'
                         zayv = zayv[:-5]
-                        print(zayv)
                         zay = Zayavki(team=obj,zayavki=zayv)
-                        print('kkk')
-                        print(zay.zayavki)
                         zay.save()
         if nazad:
             return redirect('/search-page/')
