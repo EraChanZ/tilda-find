@@ -148,13 +148,12 @@ def perspage(request):
         zapr = {}
         allzay = Zayavki.objects.all()
         for zay in allzay:
-            for d in data:
-                if zay.team == d:
-                    if zay.team in zapr:
-                        zapr[zay.team].append(zay.zayavki.split('!@#$'))
-                    else:
-                        zapr[zay.team] = []
-                        zapr[zay.team].append(zay.zayavki.split('!@#$'))
+            if zay.team == data[0]:
+                if zay.team in zapr:
+                    zapr[zay.team].append(zay.zayavki.split('!@#$'))
+                else:
+                    zapr[zay.team] = []
+                    zapr[zay.team].append(zay.zayavki.split('!@#$'))
         for zap in zapr:
             zapp = zap
             k = 0
@@ -179,7 +178,7 @@ def perspage(request):
         if zez:
             return (render(request,'lk.html',context = {'list': data,'zayav':zez}))
         else:
-            return (render(request, 'lk.html', context={'list': data, 'zayav': ['Пока заявок нет']}))
+            return (render(request, 'lk.html', context={'list': data, 'zayav': [['Пока заявок нет']]}))
     else:
         return redirect('/accounts/logout/')
 def search(request):
