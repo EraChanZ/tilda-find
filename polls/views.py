@@ -165,7 +165,7 @@ def perspage(request):
                 k += 1
         zez = []
         j = 0
-        if zapr[zapp]:
+        if zapr:
             for ne in zapr[zapp]:
                 zez.append(ne.split(':'))
                 i = 0
