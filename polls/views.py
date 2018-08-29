@@ -73,13 +73,21 @@ def menu(request):
         lk = request.POST.get('lk')
         add = request.POST.get('addTeam')
         nav = request.POST.get('nav')
+        counter = 0
+        allteams = Team.objects.all()
+        for team in allteams:
+            if team.person == request.user.username:
+                counter += 1
         if srch:
             slovar = {}
             return redirect('/search-page/')
         if lk:
             return redirect('/personal/')
         if add:
-            return redirect('/addteam/')
+            if counter > 0:
+                return HttpResponse('Вы уже создали одну команду, удалите прошлую, если хотите создать новую')
+            else:
+                return redirect('/addteam/')
         if nav:
             global spisok
             nav = nav.replace(' ','')
