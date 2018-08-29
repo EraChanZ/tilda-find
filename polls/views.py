@@ -217,22 +217,26 @@ def full(request):
         allobj = Team.objects.all()
         allInfo = UserDesc.objects.all()
         allzayv = Zayavki.objects.all()
+        myzay = []
         boole = False
-        if allzayv:
-            for zayvv in allzayv:
-                if '!@#$' in zayvv.zayavki:
-                    per = zayvv.zayavki.split('!@#$')
-                    for zzz in per:
-                        if zzz.split(':')[0] == request.user.email:
-                            boole = True
+        for obj in allobj:
+            if request.POST.get(request.user.username + ',' + obj.teamname):
+                for zay in allzayv:
+                    if zay.team == obj:
+                        myzay.append(zay)
+                if myzay:
+                    for zayvv in myzay:
+                        if '!@#$' in zayvv.zayavki:
+                            per = zayvv.zayavki.split('!@#$')
+                            for zzz in per:
+                                if zzz.split(':')[0] == request.user.email:
+                                    boole = True
+                        else:
+                            if zayvv.zayavki.split(':')[0] == request.user.email:
+                                boole = True
+                if boole:
+                    pass
                 else:
-                    if zayvv.zayavki.split(':')[0] == request.user.email:
-                        boole = True
-        if boole:
-            pass
-        else:
-            for obj in allobj:
-                if request.POST.get(request.user.username + ',' + obj.teamname):
                     zayv = ''
                     if int(obj.count) > 0:
                         for info in allInfo:
