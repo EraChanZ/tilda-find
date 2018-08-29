@@ -148,11 +148,13 @@ def perspage(request):
         zapr = {}
         allzay = Zayavki.objects.all()
         for zay in allzay:
-            if zay.team in zapr:
-                zapr[zay.team].append(zay.zayavki.split('!@#$'))
-            else:
-                zapr[zay.team] = []
-                zapr[zay.team].append(zay.zayavki.split('!@#$'))
+            for d in data:
+                if zay.team == d:
+                    if zay.team in zapr:
+                        zapr[zay.team].append(zay.zayavki.split('!@#$'))
+                    else:
+                        zapr[zay.team] = []
+                        zapr[zay.team].append(zay.zayavki.split('!@#$'))
         for zap in zapr:
             zapp = zap
             k = 0
