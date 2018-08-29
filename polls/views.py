@@ -155,16 +155,17 @@ def perspage(request):
                 k += 1
         zez = []
         j = 0
-        for ne in zapr[zapp]:
-            zez.append(ne.split(':'))
-            i = 0
-            for zzz in zez[j]:
-                if i == 0:
-                    zez[j][i] = 'Телеграм для связи: ' + zez[j][i]
-                if i == 1:
-                    zez[j][i] = 'Обо мне: ' + zez[j][i]
-                i += 1
-            j += 1
+        if zapr[zapp]:
+            for ne in zapr[zapp]:
+                zez.append(ne.split(':'))
+                i = 0
+                for zzz in zez[j]:
+                    if i == 0:
+                        zez[j][i] = 'Телеграм для связи: ' + zez[j][i]
+                    if i == 1:
+                        zez[j][i] = 'Обо мне: ' + zez[j][i]
+                    i += 1
+                j += 1
         if zez:
             return (render(request,'lk.html',context = {'list': data,'zayav':zez}))
         else:
