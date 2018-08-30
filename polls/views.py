@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
@@ -60,7 +59,7 @@ def check(request):
     if password and password2 and password == password2 and username and telegram and len(username) >= 4 and len(password) >= 6 and s and info  and len(info)>30:
         user = User.objects.create_user(username, telegram, password)
         user.save()
-        info = UserDesc(user = telegram,desc=info)
+        info = UserDesc(user = telegram.lower() ,desc=info)
         info.save()
         return redirect('/accounts/logout/')
     else:
@@ -147,17 +146,14 @@ def perspage(request):
         i = 0
         zapr = {}
         allzay = Zayavki.objects.all()
-        myzay = []
         for zay in allzay:
-            for item in data:
-                if zay.team == item:
-                    myzay.append(zay)
-        for zay in myzay:
-            if zay.team in zapr:
-                zapr[zay.team].append(zay.zayavki.split('!@#$'))
-            else:
-                zapr[zay.team] = []
-                zapr[zay.team].append(zay.zayavki.split('!@#$'))
+            if data:
+                if zay.team.split('/')[0] == data[0].teamname:
+                    if zay.team in zapr:
+                        zapr[zay.team].append(zay.zayavki.split('!@#$'))
+                    else:
+                        zapr[zay.team] = []
+                        zapr[zay.team].append(zay.zayavki.split('!@#$'))
         for zap in zapr:
             zapp = zap
             k = 0
@@ -222,7 +218,7 @@ def full(request):
         for obj in allobj:
             if request.POST.get(request.user.username + ',' + obj.teamname):
                 for zay in allzayv:
-                    if zay.team == obj:
+                    if zay.team.split('/')[0] == obj.teamname:
                         myzay.append(zay)
                 if myzay:
                     for zayvv in myzay:
@@ -257,12 +253,20 @@ def team(request):
         tech = request.POST.get('tech')
         teamname = request.POST.get('teamname')
         idea = request.POST.get('idea')
-        if count and int(count) <= 100 and telegram and tech and len(tech) <= 40 and teamname and len(teamname) <= 20 and len(teamname) >= 4 and idea and len(idea) <= 40:
-            tech = tech.replace(' ', '')
-            team = Team(count=count,tech=tech,teamname=teamname,idea=idea, telegram = telegram,person=request.user.username)
-            team.save()
-            return redirect('/menu/')
-        return(render(request,'addteam.html'))
+        allteam = Team.objects.all()
+        right = True
+        for team in allteam:
+            if team.teamname == teamname:
+                right = False
+        if telegram and count and tech and teamname and idea:
+            if right and count and int(count) <= 100 and telegram and tech and len(tech) <= 40 and teamname and len(teamname) <= 20 and len(teamname) >= 4 and idea and len(idea) <= 40:
+                tech = tech.replace(' ', '')
+                team = Team(count=count,tech=tech,teamname=teamname,idea=idea, telegram = telegram,person=request.user.username)
+                team.save()
+                return redirect('/menu/')
+            if int(count) >= 100 or len(tech) >= 40 or len(teamname) >= 20 or len(teamname) <= 4 or len(teamname) >= 20 or len(idea) >= 40:
+                return HttpResponse('Что-то вы набрали не так...')
+        return (render(request, 'addteam.html'))
     else:
         return redirect('/accounts/logout/')
 def panel(request):
@@ -272,12 +276,15 @@ def panel(request):
             if dlt:
                 lol = Team.objects.all()
                 kekk = Zayavki.objects.all()
+                desc = UserDesc.objects.all()
                 for obj in lol:
                     obj.delete()
                 for usr in User.objects.all():
                     usr.delete()
                 for k in kekk:
                     k.delete()
+                for d in desc:
+                    d.delete()
             return (render(request,'panel.html'))
         else:
             return HttpResponse('Ты не админ, сори')
