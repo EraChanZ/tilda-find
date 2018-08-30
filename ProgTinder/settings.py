@@ -116,4 +116,7 @@ STATIC_URL ='/static/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-
+try:
+    from .settings_prod import *
+except:
+    pass
