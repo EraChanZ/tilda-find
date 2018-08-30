@@ -31,7 +31,8 @@ urlpatterns = [
     path('algoritm-page/',algoritm),
     path('personal/',perspage),
     path('full/',full),
-    path('admin-panel/',panel)
+    path('admin-panel/',panel),
+    path('change-info/',change)
 ]
 #Add Django site authentication urls (for login, logout, password management)
 #urlpatterns += [

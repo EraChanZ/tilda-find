@@ -7,6 +7,9 @@
 </head>
 <body>
      <style>
+         #change {
+             margin-left: 1050px;
+         }
         body{
             color: #ffffff;
             font-family: Roboto, sans-serif;
@@ -41,6 +44,10 @@
 
 
     </style>
+     <form method = 'post'>
+         {% csrf_token %}
+         <input type = 'submit' id = 'change' value = 'Изменить информацию о себе' name = {{ curuser }}>
+     </form>
     <h3>
         Ваши заявки на поиск команды:
     </h3>

@@ -130,8 +130,28 @@ def algoritm(request):
         return redirect('/search-page/')
     else:
         return redirect('/accounts/logout/')
+def change(request):
+    if request.user.is_authenticated:
+        changeinf = request.POST.get('changeinf')
+        descs = UserDesc.objects.all()
+        if changeinf:
+            if len(changeinf)>=30:
+                for obj in descs:
+                    if obj.user == request.user.email.lower():
+                        obj.delete()
+                usr = UserDesc(user=request.user.email.lower(),desc=changeinf)
+                usr.save()
+                return redirect('/personal/')
+            else:
+                return HttpResponse('Описание должно состоять как минимум из 30 символов')
+        return (render(request,'change.html'))
+    else:
+        return redirect('/accounts/logout/')
 def perspage(request):
     if request.user.is_authenticated:
+        change = request.POST.get(request.user.username)
+        if change:
+            return redirect('/change-info/')
         mm = request.POST.get('mainmenu')
         if mm:
             return redirect('/menu/')
@@ -176,9 +196,9 @@ def perspage(request):
                     i += 1
                 j += 1
         if zez:
-            return (render(request,'lk.html',context = {'list': data,'zayav':zez}))
+            return (render(request,'lk.html',context = {'list': data,'zayav':zez,'curuser':request.user.username}))
         else:
-            return (render(request, 'lk.html', context={'list': data, 'zayav': [['Пока заявок нет']]}))
+            return (render(request, 'lk.html', context={'list': data, 'zayav': [['Пока заявок нет']],'curuser':request.user.username}))
     else:
         return redirect('/accounts/logout/')
 def search(request):
