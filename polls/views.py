@@ -107,8 +107,8 @@ def menu(request):
         return redirect('/accounts/logout/')
 def algoritm(request):
     global slovar
-    slovar = {}
     if request.user.is_authenticated:
+        slovar = {}
         data = Team.objects.all()
         for item in data:
             kek = item.tech
@@ -119,7 +119,8 @@ def algoritm(request):
                     pass
                 else:
                     spisok2.append(w)
-            spisok2.remove('')
+            if '' in spisok2:
+                spisok2.remove('')
             for a in spisok:
                 for b in spisok2:
                     if a == b:
